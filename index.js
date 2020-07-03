@@ -4,7 +4,7 @@
 const mongoose = require('mongoose')
 
 const app = require('./app')
-const port = 4000
+const port = 3900
 
 mongoose.connect('mongodb://localhost:27017/mi_api_web', {useUnifiedTopology: true, useNewUrlParser: true})
 .then(() => console.log('Conectado a MongoDB'))

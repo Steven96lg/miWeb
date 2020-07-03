@@ -2,6 +2,8 @@
 'use strict'
 
 const Articles = require('../models/Articles')
+const fs = require('fs')
+const path = require('path')
 
 const controller = {
 
@@ -109,6 +111,69 @@ const controller = {
                 Article: articleDelete
             })
         })
+    },
+
+    upload: (req, res) => {
+
+        var file_name = 'imagen no subida'
+
+        if(!req.files){
+            res.status(404).send({
+                status: 'Error',
+                message: file_name
+            })
+        }
+
+        var namePath = req.files.file0.path
+        var fileCut = namePath.split('\\')
+
+        var fileType = fileCut[2].split('.')
+        var extendFile = fileType[1]
+
+        if(extendFile != 'jpg' && extendFile != 'jpeg' && extendFile != 'png' && extendFile != 'gif'){
+            
+            fs.unlink(namePath, (err) => {
+                res.status(404).send({
+                    status: 'Tipo de Archivo no Compatible, por favor suba una Imagen'
+                })
+            })
+
+           
+        }else{
+            var id = req.params.id
+
+            Articles.findOneAndUpdate({_id:id}, {image: namePath}, {new: true}, (err, imageUp) => {
+
+                if(err){
+                    res.status(404).send({
+                        status: 'Error Al subir Imagen al Servidor'
+                    })
+                }
+                res.status(200).send({
+                    status: 'Success',
+                    message: imageUp
+                })
+            })
+            
+        }
+
+    },
+
+    getImage: (req, res) => {
+        var file = req.params.image
+        var pathFile = './upload/articles/'+file
+
+        fs.exists(pathFile, (exists) => {
+            if(exists){
+                return res.sendFile(path.resolve(pathFile))
+            }else{
+                res.status(404).send({
+                    status: 'Error',
+                    message: 'Imagen No existe'
+                })
+            }
+        })
+
     }
 }
 
