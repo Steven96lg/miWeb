@@ -127,7 +127,9 @@ const controller = {
         var namePath = req.files.file0.path
         var fileCut = namePath.split('\\')
 
-        var fileType = fileCut[2].split('.')
+        var fileName = fileCut[2]
+
+        var fileType = fileName.split('.')
         var extendFile = fileType[1]
 
         if(extendFile != 'jpg' && extendFile != 'jpeg' && extendFile != 'png' && extendFile != 'gif'){
@@ -142,7 +144,7 @@ const controller = {
         }else{
             var id = req.params.id
 
-            Articles.findOneAndUpdate({_id:id}, {image: namePath}, {new: true}, (err, imageUp) => {
+            Articles.findOneAndUpdate({_id:id}, {image: fileName}, {new: true}, (err, imageUp) => {
 
                 if(err){
                     res.status(404).send({
